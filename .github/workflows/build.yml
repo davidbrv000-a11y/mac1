@@ -1,0 +1,29 @@
+name: Build Mac App
+
+on: [push]
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller plyer
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --windowed --onefile apple_planner.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macOS-App
+          path: dist/
