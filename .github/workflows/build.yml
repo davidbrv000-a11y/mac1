@@ -16,14 +16,30 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # Устанавливаем PyInstaller, plyer и утилиту для создания DMG-дисков
           pip install pyinstaller plyer
+          brew install create-dmg
 
-      - name: Build with PyInstaller
+      - name: Build App Bundle
         run: |
-          pyinstaller --windowed --onefile --target-architecture universal2 apple_planner.py
+          # Собираем как полноценный .app бандл без флага --onefile
+          pyinstaller --windowed --target-architecture universal2 apple_planner.py
 
-      - name: Upload artifact
+      - name: Create DMG Installer
+        run: |
+          # Упаковываем .app в правильный образ диска, чтобы не ломались права
+          mkdir dmg_root
+          cp -r dist/apple_planner.app dmg_root/
+          create-dmg \
+            --volname "Apple Planner Installer" \
+            --window-size 500 300 \
+            --icon-size 100 \
+            --icon "apple_planner.app" 175 120 \
+            "dist/Apple_Planner_Setup.dmg" \
+            "dmg_root/"
+
+      - name: Upload DMG Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macOS-App
-          path: dist/
+          name: macOS-DMG-Installer
+          path: dist/Apple_Planner_Setup.dmg
