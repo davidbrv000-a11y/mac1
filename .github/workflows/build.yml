@@ -20,7 +20,7 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller --windowed --onefile apple_planner.py
+          pyinstaller --windowed --onefile --target-architecture universal2 apple_planner.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
